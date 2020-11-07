@@ -1,0 +1,93 @@
+{
+  "project_info": {
+    "project_number": "859831440021",
+    "firebase_url": "https://nitesh-4ed9f.firebaseio.com",
+    "project_id": "nitesh-4ed9f",
+    "storage_bucket": "nitesh-4ed9f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859831440021:android:a3d331c25aa3ea5ee4019c",
+        "android_client_info": {
+          "package_name": "com.ad.nitesh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859831440021-efv4p0pupmp6mio3l0ete3rt9pg6ceev.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ad.nitesh",
+            "certificate_hash": "c76d1c6568fb07cab0a3b15ba5b4a7d69f7695b2"
+          }
+        },
+        {
+          "client_id": "859831440021-cui153d2aj0o2tue95ghjc4u6vcgveec.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ad.nitesh",
+            "certificate_hash": "a9f786c21bc6f699c36756e182f3c9a1ccfbf98a"
+          }
+        },
+        {
+          "client_id": "859831440021-gtk49fufcain90osniojnopve762a7h1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpdqKXUijxwmppLjEQKbs723k8-Yd0S2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859831440021-gtk49fufcain90osniojnopve762a7h1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859831440021:android:ed39e8cd34da18f3e4019c",
+        "android_client_info": {
+          "package_name": "com.ad.nitesh_host"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859831440021-ej2pbl4letap2uruedl8sqlv1mva9vbi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ad.nitesh_host",
+            "certificate_hash": "c76d1c6568fb07cab0a3b15ba5b4a7d69f7695b2"
+          }
+        },
+        {
+          "client_id": "859831440021-gtk49fufcain90osniojnopve762a7h1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpdqKXUijxwmppLjEQKbs723k8-Yd0S2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859831440021-gtk49fufcain90osniojnopve762a7h1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
