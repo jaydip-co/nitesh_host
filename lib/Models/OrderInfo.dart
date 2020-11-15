@@ -20,11 +20,13 @@ class OrderInfo {
   String paymentId;
   String paymenType;
   final int quantity;
+  final String OrderId;
   String reasonForDenied;
   String status;
   String UserId;
 
-  OrderInfo({
+  OrderInfo( {
+    this.OrderId,
     this.quantity,
     this.Category,
     this.PaidAmmount,

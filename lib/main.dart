@@ -9,11 +9,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitesh_host/DataBaseService.dart';
 import 'package:nitesh_host/Models/OrderInfo.dart';
+import 'package:nitesh_host/OrderChangeNotifier.dart';
 import 'package:nitesh_host/Providers/PageProvider.dart';
 import 'package:nitesh_host/Screens/OrderItemScreen.dart';
 import 'package:nitesh_host/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:nitesh_host/pages/ItemsPage.dart';
+import 'package:nitesh_host/pages/addItem.dart';
 import 'package:provider/provider.dart';
 
 import 'dd.dart';
@@ -53,7 +55,9 @@ class MyApp extends StatelessWidget {
       ),
       home: ChangeNotifierProvider<PageProvider>.value(
         value: PageProvider(),
-          child: MyHomePage(title: 'Flutter Demo Home Page')),
+          child: ChangeNotifierProvider(
+            create: (c) => OrderChangeNotifier(),
+              child: MyHomePage(title: 'Flutter Demo Home Page'))),
     );
   }
 }
@@ -77,7 +81,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  String _currentSelection = 'new Order';
   final String serverToken= "AAAAyDHykpU:APA91bGybaVRBEVIPYjkOwkePEMUg0teZWy_ErEymI5eZXnqDfC1DvuRX1fMbDHmuVAqW-NFRplg1LKIoZSTu8y2z1USUeQfZ1Vt--rMmZomasb0mbf3rLjTzYM7UnBYHAOIM5mU1Zxr";
   int _currentIndex = 0;
   final FirebaseMessaging _messaging = FirebaseMessaging();
@@ -98,20 +102,24 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final currentPage = Provider.of<PageProvider>(context).currentPage;
+    final currentOrder = Provider.of<OrderChangeNotifier>(context);
+    String current = currentOrder.currentOrderStatus;
+    Stream<List<OrderInfo>> _currentStream;
+    switch(current){
+      case 'new Order':
+        _currentStream = DataBaseService().getOrder;
+        break;
+      case 'cancel':
+        _currentStream = DataBaseService().calcelStream;
+        break;
+      case 'confirmed':
+        _currentStream = DataBaseService().confirmStream;
+    }
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -124,131 +132,164 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("app title"),
       ),
       // body: SingleOrder(),
-      body: (currentPage == pages.Items) ? ItemsPage() :StreamBuilder<List<OrderInfo>>(
-        stream: DataBaseService().getOrder,
-        builder: (context,snap){
-          if(snap.hasData) {
-            List<OrderInfo> orders = snap.data;
-            return ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (_,i){
-              // return GestureDetector(
-              //   onTap: ()async{
-              //     // controller.stop();
-              //     // await _tempProduct.setProduct(snapshot.data.documents[index].documentID);
-              //     // return _pageprovider.setpages('Product',_pageprovider.page);
-              //   },
-              //   child: Card(
-              //
-              //     shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black,width: 0.4),borderRadius: BorderRadius.circular(4.0)),
-              //     clipBehavior: Clip.antiAlias,
-              //     child: Row(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       mainAxisAlignment: MainAxisAlignment.start,
-              //       children: <Widget>[
-              //         Card(
-              //           child: Container(
-              //               width:  180,
-              //               height: 150,
-              //
-              //
-              //               // child: Image(
-              //               //   image: NetworkImage(snapshot.data.documents[index]['Images'][0]),
-              //               // )
-              //           ),
-              //         ),
-              //
-              //         Expanded(
-              //           child:  Column(
-              //             crossAxisAlignment: CrossAxisAlignment.start,
-              //             children: [
-              //               Text(
-              //                 // snapshot.data.documents[index]['ItemTitle'].toString() + '',
-              //                 "jay",
-              //                 style: TextStyle(
-              //                     fontWeight: FontWeight.w400,
-              //                     fontSize: 16.0
-              //                 ),
-              //               ),
-              //               SizedBox(height: 5,),
-              //               Row(
-              //                 children: [
-              //                   Text(
-              //                     '₹',
-              //                     style: TextStyle(
-              //                       fontWeight: FontWeight.w400,
-              //                       fontSize: 18.0,
-              //                     ),
-              //                   ),
-              //                   SizedBox(width: 4,),
-              //                   // EasyRichText(
-              //                   //   '₹',
-              //                   //   patternList: [
-              //                   //     EasyRichTextPattern(
-              //                   //       targetString: '₹',
-              //                   //       subScript: true,
-              //                   //       //Only TM after Product will be modified
-              //                   //       stringBeforeTarget: 'Product',
-              //                   //       //There is no space between Product and TM
-              //                   //       matchWordBoundaries: false,
-              //                   //       style: TextStyle(
-              //                   //
-              //                   //           decoration: TextDecoration.lineThrough,
-              //                   //           fontSize: 17.0
-              //                   //       ),
-              //                   //     ),
-              //                   //   ],
-              //                   // ),
-              //                   SizedBox(width: 4,),
-              //                   Text(
-              //                     'Save '+'₹',
-              //                     style: TextStyle(
-              //
-              //                       fontSize: 14.0,
-              //
-              //                     ),
-              //                   ),
-              //
-              //                 ],
-              //               ),
-              //               SizedBox(height: 5,),
-              //               // Text(
-              //               //   'Free Delivery',
-              //               //   style: TextStyle(
-              //               //
-              //               //     fontSize: 15.0,
-              //               //
-              //               //   ),
-              //               // ),
-              //             ],
-              //           ),
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              // );
-              // if(curentPage == pages.Items){
-              //   return ItemsPage();
-              // }
-              return Container(
-                margin: EdgeInsets.only(left: 5),
-                padding:EdgeInsets.all(2),
-                color: orders[i].seen ? Colors.white :Colors.grey[100],
-                child: ListTile(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (con) => OrderItemScreen(order:orders[i] ,)));
-                  },
-
-                  contentPadding: EdgeInsets.all(0),
-                  // isThreeLine: true,
-                  // trailing: Image.network("https://firebasestorage.googleapis.com/v0/b/nitesh-4ed9f.appspot.com/o/sharingan.jpg?alt=media&token=1274aa3e-fd1e-49e7-b159-0ffeba9fd3f6"),
-                  title: Text(orders[i].first+" has ordered torch",style: TextStyle(fontSize: 14,letterSpacing: .5),),
-                ),
+      body: (currentPage == pages.Items) ? ItemsPage() :Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          DropdownButton(
+            value: _currentSelection,
+            items: ['new Order','cancel','confirmed'].map((e) {
+              print(e);
+              return DropdownMenuItem(
+              child: Text(e),
+                value: e.toString(),
               );
-            });
-          }
-          return Container();
-          },
+            }).toList(),
+            onChanged: (value) {  setState(() {
+              _currentSelection = value;
+              currentOrder.setCurrentOrderStatus(value);
+            });},
+
+          ),
+          StreamBuilder<List<OrderInfo>>(
+            stream: _currentStream,
+            builder: (context,snap){
+              if(snap.hasData) {
+                List<OrderInfo> orders = snap.data;
+                return Expanded(
+                  child: ListView.builder(
+                  itemCount: orders.length,
+                  itemBuilder: (_,i){
+                    // return GestureDetector(
+                    //   onTap: ()async{
+                    //     // controller.stop();
+                    //     // await _tempProduct.setProduct(snapshot.data.documents[index].documentID);
+                    //     // return _pageprovider.setpages('Product',_pageprovider.page);
+                    //   },
+                    //   child: Card(
+                    //
+                    //     shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black,width: 0.4),borderRadius: BorderRadius.circular(4.0)),
+                    //     clipBehavior: Clip.antiAlias,
+                    //     child: Row(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       mainAxisAlignment: MainAxisAlignment.start,
+                    //       children: <Widget>[
+                    //         Card(
+                    //           child: Container(
+                    //               width:  180,
+                    //               height: 150,
+                    //
+                    //
+                    //               // child: Image(
+                    //               //   image: NetworkImage(snapshot.data.documents[index]['Images'][0]),
+                    //               // )
+                    //           ),
+                    //         ),
+                    //
+                    //         Expanded(
+                    //           child:  Column(
+                    //             crossAxisAlignment: CrossAxisAlignment.start,
+                    //             children: [
+                    //               Text(
+                    //                 // snapshot.data.documents[index]['ItemTitle'].toString() + '',
+                    //                 "jay",
+                    //                 style: TextStyle(
+                    //                     fontWeight: FontWeight.w400,
+                    //                     fontSize: 16.0
+                    //                 ),
+                    //               ),
+                    //               SizedBox(height: 5,),
+                    //               Row(
+                    //                 children: [
+                    //                   Text(
+                    //                     '₹',
+                    //                     style: TextStyle(
+                    //                       fontWeight: FontWeight.w400,
+                    //                       fontSize: 18.0,
+                    //                     ),
+                    //                   ),
+                    //                   SizedBox(width: 4,),
+                    //                   // EasyRichText(
+                    //                   //   '₹',
+                    //                   //   patternList: [
+                    //                   //     EasyRichTextPattern(
+                    //                   //       targetString: '₹',
+                    //                   //       subScript: true,
+                    //                   //       //Only TM after Product will be modified
+                    //                   //       stringBeforeTarget: 'Product',
+                    //                   //       //There is no space between Product and TM
+                    //                   //       matchWordBoundaries: false,
+                    //                   //       style: TextStyle(
+                    //                   //
+                    //                   //           decoration: TextDecoration.lineThrough,
+                    //                   //           fontSize: 17.0
+                    //                   //       ),
+                    //                   //     ),
+                    //                   //   ],
+                    //                   // ),
+                    //                   SizedBox(width: 4,),
+                    //                   Text(
+                    //                     'Save '+'₹',
+                    //                     style: TextStyle(
+                    //
+                    //                       fontSize: 14.0,
+                    //
+                    //                     ),
+                    //                   ),
+                    //
+                    //                 ],
+                    //               ),
+                    //               SizedBox(height: 5,),
+                    //               // Text(
+                    //               //   'Free Delivery',
+                    //               //   style: TextStyle(
+                    //               //
+                    //               //     fontSize: 15.0,
+                    //               //
+                    //               //   ),
+                    //               // ),
+                    //             ],
+                    //           ),
+                    //         )
+                    //       ],
+                    //     ),
+                    //   ),
+                    // );
+                    // if(curentPage == pages.Items){
+                    //   return ItemsPage();
+                    // }
+                    return Container(
+                      decoration: BoxDecoration(border: Border.all(color: Colors.black12),
+                        color: orders[i].seen ? Colors.white :Colors.grey[200],),
+                      margin: EdgeInsets.only(left: 5,right: 5),
+                      padding:EdgeInsets.all(2),
+                      child: ListTile(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (con) => OrderItemScreen(order:orders[i] ,)));
+                        },
+
+                        contentPadding: EdgeInsets.all(0),
+                        // isThreeLine: true,
+                        // trailing: Image.network("https://firebasestorage.googleapis.com/v0/b/nitesh-4ed9f.appspot.com/o/sharingan.jpg?alt=media&token=1274aa3e-fd1e-49e7-b159-0ffeba9fd3f6"),
+                        title: Text(orders[i].first+" has ordered torch",style: TextStyle(fontSize: 14,letterSpacing: .5),),
+                        trailing: Container(
+                          color: Colors.red,
+                          height: 30,
+                            width: 30,
+                            margin: EdgeInsets.only(right: 10),
+                            child: Image.network(
+                                "https://firebasestorage.googleapis.com/v0/b/nitesh-4ed9f.appspot.com/o/a869ff6c-d006-47e8-aea3-154a9edff63f.jpg?alt=media&token=041e6dc7-b438-4f9c-98b5-10b2e018efaf",
+                              fit: BoxFit.fill,
+                            )),
+                      ),
+                    );
+                  }),
+                );
+              }
+              return Container();
+              },
+          ),
+
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
